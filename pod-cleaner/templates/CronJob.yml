@@ -1,0 +1,29 @@
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ .Values.cron.name }}
+spec:
+  schedule: "{{ .Values.cron.schedule }}"
+  successfulJobsHistoryLimit: {{ .Values.cron.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.cron.failedJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: "{{ include "pod-cleaner.serviceAccountName" . }}"
+          containers:
+          - name: {{ .Values.containers.name }}
+            image: {{ .Values.containers.image }}
+            imagePullPolicy:  {{ .Values.containers.pullPolicy }}
+            args:
+            - /bin/ash
+            - -c
+            - {{ .Values.containers.args }}
+            env:
+              - name: NAMESPACE
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.namespace
+          restartPolicy: {{ .Values.containers.restartPolicy }}
+
