@@ -11,7 +11,7 @@ containers:
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
   #args: "echo $NAMESPACE"
-  args: kubectl -n $NAMESPACE get pods  -o json  | jq -r '.items[] | select( ([ .status.containerStatuses[] | select(.state.waiting.reason == "ErrImageNeverPull" or .state.waiting.reason == "Failed" or .state.waiting.reason == "Error" or .state.waiting.reason == "Evicted" or .state.waiting.reason == "CrashLoopBackOff") ] | length ) == 1 ) | .metadata.name' | xargs kubectl -n $NAMESPACE delete pod
+  args: kubectl -n $NAMESPACE get pods  -o json  | jq -r '.items[] | select( ([ .status.containerStatuses[] | select(.state.waiting.reason == "ErrImageNeverPull" or .state.waiting.reason == "Failed" or .state.waiting.reason == "Error" or .state.waiting.reason == "Evicted" or .state.waiting.reason == "CrashLoopBackOff") ] | length ) == 1 ) | .metadata.name' | xargs kubectl -n $NAMESPACE delete pod || true
 
 cron:
   name: pod-cleaner
