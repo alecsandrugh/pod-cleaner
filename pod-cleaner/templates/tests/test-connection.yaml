@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "pod-cleaner.fullname" . }}-test-connection"
+  labels:
+    {{- include "pod-cleaner.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  serviceAccountName: "{{ include "pod-cleaner.serviceAccountName" . }}"
+  containers:
+  - name: {{ .Values.containers.name }}
+    image: {{ .Values.containers.image }}
+    imagePullPolicy:  {{ .Values.containers.pullPolicy }}
+    args:
+    - /bin/ash
+    - -c
+    - kubectl -n $NAMESPACE get pods
+    env:
+      - name: NAMESPACE
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.namespace
+  restartPolicy: {{ .Values.containers.restartPolicy }}
+
