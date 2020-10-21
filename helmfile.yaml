@@ -1,0 +1,27 @@
+repositories:
+    - name: stable
+      url: https://kubernetes-charts.storage.googleapis.com
+
+releases:
+    - name: pod-cleaner-default
+      namespace: default
+      chart: ./charts/pod-cleaner
+      values:
+        - ClusterRole:
+            name: "modify-pods-default" 
+        - ClusterRoleBinding:
+            name: modify-pods-to-sa-default
+
+    - name: pod-cleaner-clean
+      namespace: clean
+      createNamespace: true
+      labels:
+        env: test
+      chart: ./charts/pod-cleaner
+      values:
+        - ClusterRole:
+            name: "modify-pods-clean" 
+        - ClusterRoleBinding:
+            name: modify-pods-to-sa-clean
+
+
