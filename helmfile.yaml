@@ -6,6 +6,7 @@ releases:
     - name: pod-cleaner-default
       namespace: default
       chart: ./charts/pod-cleaner
+      version: 1.0
       values:
         - ClusterRole:
             name: "modify-pods-default" 
