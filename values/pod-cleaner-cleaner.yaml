@@ -1,0 +1,35 @@
+# Default values for kube-clean.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+containers:
+  name: "pod-cleaner"
+  repository: ""
+  image: alexandrugh/alpine-kubectl
+  pullPolicy: IfNotPresent # Never
+  restartPolicy: OnFailure
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+  #args: "echo $NAMESPACE"
+  args: kubectl -n $NAMESPACE get pods  -o json  | jq -r '.items[] | select( ([ .status.containerStatuses[] | select(.state.waiting.reason == "ErrImageNeverPull" or .state.waiting.reason == "Failed" or .state.waiting.reason == "Error" or .state.waiting.reason == "Evicted" or .state.waiting.reason == "CrashLoopBackOff") ] | length ) == 1 ) | .metadata.name' | xargs kubectl -n $NAMESPACE delete pod || true
+
+cron:
+  name: pod-cleaner
+  schedule: "*/1 * * * *"
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+ClusterRole:
+  name: "modify-pods-cleaner"
+podAnnotations: {}
+
+ClusterRoleBinding:
+  name: modify-pods-to-sa-cleaner

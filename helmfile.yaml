@@ -8,10 +8,7 @@ releases:
       chart: ./charts/pod-cleaner
       version: 1.0
       values:
-        - ClusterRole:
-            name: "modify-pods-default" 
-        - ClusterRoleBinding:
-            name: modify-pods-to-sa-default
+        - ./values/pod-cleaner-default.yaml
 
     - name: pod-cleaner-clean
       namespace: clean
@@ -19,10 +16,9 @@ releases:
       labels:
         env: test
       chart: ./charts/pod-cleaner
+      version: 1.0
       values:
-        - ClusterRole:
-            name: "modify-pods-clean" 
-        - ClusterRoleBinding:
-            name: modify-pods-to-sa-clean
+        - ./values/pod-cleaner-cleaner.yaml
+
 
 
